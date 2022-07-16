@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -12,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] float groundDistance = 0.4f;
     [SerializeField] LayerMask groundMask;
+    
 
     [Header("For Animation")]
     [SerializeField] bool isFire;
@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator _animArmsAKa;
     [SerializeField] Animator _animGunM119;
     [SerializeField] Animator _animArmsM119;
+    
+
+
 
 
     Vector3 velocity;
@@ -38,6 +41,9 @@ public class PlayerController : MonoBehaviour
         Movement();
         CheckMap();
         SetBoolAnimation();
+      
+
+
     }
     void Movement()
     {
@@ -67,6 +73,7 @@ public class PlayerController : MonoBehaviour
             _animGunAka.SetTrigger("isFire");
             _animArmsM119.SetTrigger("isFire");
             _animGunM119.SetTrigger("isFire");
+           
         }
     }
 
