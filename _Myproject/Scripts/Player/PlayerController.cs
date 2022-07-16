@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("For Player")]
     [SerializeField] CharacterController _playerController;
     [Range(0f, 20f)]
     [SerializeField] float _speedMove = 12f;
@@ -22,7 +23,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator _animArmsAKa;
     [SerializeField] Animator _animGunM119;
     [SerializeField] Animator _animArmsM119;
-    
+
+    [Header("Shotting")]
+    [Range(0f, Mathf.Infinity)]
+    [SerializeField] float _range;
+    [SerializeField] Camera _fpsCam;
+
 
 
 
@@ -69,6 +75,7 @@ public class PlayerController : MonoBehaviour
     {
        if(Input.GetMouseButton(0))
         {
+            Shot();
             _animArmsAKa.SetTrigger("isFire");
             _animGunAka.SetTrigger("isFire");
             _animArmsM119.SetTrigger("isFire");
@@ -76,5 +83,24 @@ public class PlayerController : MonoBehaviour
            
         }
     }
+
+     void Shot()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range))
+        {
+            Debug.Log(hit.transform.name);
+        }
+        var _damged = GetComponent<Gun>();
+        var _target = hit.transform.GetComponent<Target>();
+
+        if(_target != null)
+        {
+            _target.TakeDamge(_damged.Dameged());
+        }    
+
+        Debug.DrawRay(_fpsCam.transform.position, _fpsCam.transform.forward * _range, Color.red);
+    }
+
 
 }
