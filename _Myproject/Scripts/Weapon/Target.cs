@@ -7,7 +7,6 @@ public class Target : MonoBehaviour
     [Header("Heath")]
     [SerializeField] int _heath = 50;
    
-    
 
     // Start is called before the first frame update
     void Start()

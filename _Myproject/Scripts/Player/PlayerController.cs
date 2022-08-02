@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("For Player")]
+    [Header("For Player Movement")]
     [SerializeField] CharacterController _playerController;
     [Range(0f, 20f)]
     [SerializeField] float _speedMove = 12f;
@@ -13,25 +13,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundDistance = 0.4f;
     [SerializeField] LayerMask groundMask;
     
-
-    [Header("For Animation")]
-    [SerializeField] bool isFire;
-    
-
-    [Header("Animator")]
-    [SerializeField] Animator _animGunAka;
-    [SerializeField] Animator _animArmsAKa;
-    [SerializeField] Animator _animGunM119;
-    [SerializeField] Animator _animArmsM119;
-
-    [Header("Shotting")]
-    [Range(0f, Mathf.Infinity)]
-    [SerializeField] float _range;
-    [SerializeField] Camera _fpsCam;
-
-
-
-
 
     Vector3 velocity;
     bool isGrounded;
@@ -46,7 +27,7 @@ public class PlayerController : MonoBehaviour
     {
         Movement();
         CheckMap();
-        SetBoolAnimation();
+      
       
 
 
@@ -71,36 +52,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = 0f;
         }
     }
-    void SetBoolAnimation()
-    {
-       if(Input.GetMouseButton(0))
-        {
-            Shot();
-            _animArmsAKa.SetTrigger("isFire");
-            _animGunAka.SetTrigger("isFire");
-            _animArmsM119.SetTrigger("isFire");
-            _animGunM119.SetTrigger("isFire");
-           
-        }
-    }
-
-     void Shot()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range))
-        {
-            Debug.Log(hit.transform.name);
-        }
-        var _damged = GetComponent<Gun>();
-        var _target = hit.transform.GetComponent<Target>();
-
-        if(_target != null)
-        {
-            _target.TakeDamge(_damged.Dameged());
-        }    
-
-        Debug.DrawRay(_fpsCam.transform.position, _fpsCam.transform.forward * _range, Color.red);
-    }
+  
 
 
 }
