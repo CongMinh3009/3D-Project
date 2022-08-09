@@ -18,15 +18,17 @@ public class Gun : MonoBehaviour
     [SerializeField] Camera _fpsCam;
     [SerializeField] float _fireRate;
     [SerializeField] float _nextTimeToFire;
+    [SerializeField] LayerMask layerMask;
     
-    [Header("Muzzle Flash")]
-    [SerializeField] GameObject _muzzleFlash;
+    //[Header("Muzzle Flash")]
+    //[SerializeField] GameObject _muzzleFlash;
    
 
-    [Header("Impact")]
+    [Header("Impact&Muzzle")]
     [SerializeField] float _impactForce;
     [SerializeField]public ImpactInfo[] ImpactElements;
-  
+    [SerializeField] ParticleSystem[] _muzzleEffect;
+    [SerializeField] GameObject _pointLight;
 
     private void Update()
     {
@@ -39,9 +41,13 @@ public class Gun : MonoBehaviour
 
         if (Input.GetMouseButton(0) && Time.time >= _nextTimeToFire)
         {
-            _nextTimeToFire = Time.time + 1 /_fireRate;
+            _nextTimeToFire = Time.time + 1 / _fireRate;
             Shot();
             SetAnimation();
+        }
+        else
+        {
+            _pointLight.SetActive(false);
         }
 
 
@@ -53,43 +59,40 @@ public class Gun : MonoBehaviour
 
     }
    
-    void Shot()
+    void Shot() 
     {
-
-        RaycastHit hit;
-        if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range))
+        _pointLight.SetActive(true);
+        foreach(var muzzle in _muzzleEffect)
         {
-            Debug.Log(hit.transform.name);
+            muzzle.Play();
         }
-      
+        //_muzzleFlash.SetActive(true);
+        RaycastHit hit;
+        if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range,layerMask))
+        {
+            Debug.Log(hit.transform.name, hit.transform.gameObject);
+        }
         
         var effect = TakeImpactEffect(hit.transform.gameObject);
+        //if (effect != null) { }
+        
         // không có bắn trúng GameObject nào thì sẽ trả về bỏ qua
-        //if (effect == null) return;
+        if (effect == null) return;
 
-        //Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
-       
+        //var _impactEffect = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
 
-
-        //Instantiate(_impactEffect, hit.point, Quaternion.LookRotation(hit.normal)) cách 1;
-
-        //cách 2 để sử dụng _muzzleflash dễ quá mà tui mới nhận ra
-        _muzzleFlash.SetActive(false);
-        _muzzleFlash.SetActive(true);
-
-        //StartCoroutine(wait()) cách 1;
-        //if (_target != null)
-        //{
-        //    _target.TakeDamge(_damged);
-
-        //}
-        if(hit.rigidbody != null)
+        if (hit.rigidbody != null)
         {
             hit.rigidbody.AddForce(-hit.normal * _impactForce);
         }
 
+       var _impactEffect = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
+        Destroy(_impactEffect, 3f);
+        //Object Pool: EZ Pooling
 
 
+        Debug.Log("Spawn effect");
+        //Debug.Log(_impactEffect);
         Debug.DrawRay(_fpsCam.transform.position, _fpsCam.transform.forward * _range, Color.red);
     }
     [System.Serializable]
@@ -101,7 +104,7 @@ public class Gun : MonoBehaviour
    
     GameObject TakeImpactEffect(GameObject gameObjectImpact)
     {
-        var materialType = GetComponent<MaterialGunType>();
+        var materialType = gameObjectImpact.GetComponent<MaterialGunType>();
         if (materialType == null) return null;
         foreach(var impactInfo in ImpactElements)
         {
