@@ -19,17 +19,17 @@ public class Gun : MonoBehaviour
     [SerializeField] float _fireRate;
     [SerializeField] float _nextTimeToFire;
     [SerializeField] LayerMask layerMask;
-    
-    //[Header("Muzzle Flash")]
-    //[SerializeField] GameObject _muzzleFlash;
-   
+
+
+
 
     [Header("Impact&Muzzle")]
     [SerializeField] float _impactForce;
-    [SerializeField]public ImpactInfo[] ImpactElements;
+    [SerializeField] public ImpactInfo[] ImpactElements;
     [SerializeField] ParticleSystem[] _muzzleEffect;
     [SerializeField] GameObject _pointLight;
 
+ 
     private void Update()
     {
         InputMouse();
@@ -49,7 +49,6 @@ public class Gun : MonoBehaviour
         {
             _pointLight.SetActive(false);
         }
-
 
     }
     void SetAnimation()
@@ -79,7 +78,8 @@ public class Gun : MonoBehaviour
         // không có bắn trúng GameObject nào thì sẽ trả về bỏ qua
         if (effect == null) return;
 
-        //var _impactEffect = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
+        //var _impactEffec
+        //t = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
 
         if (hit.rigidbody != null)
         {

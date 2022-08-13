@@ -12,8 +12,8 @@ public class WeaponSway : MonoBehaviour
     void InPutMouse()
     {
         //Input mouse
-        float MouseX = Input.GetAxisRaw("MouseX") * _swayMouse;
-        float MouseY = Input.GetAxisRaw("MouseY" )* _swayMouse;
+        float MouseX = Input.GetAxisRaw("Mouse X") * _swayMouse;
+        float MouseY = Input.GetAxisRaw("Mouse Y") * _swayMouse;
 
         // tinh toan target rotation
         Quaternion rotationX = Quaternion.AngleAxis(-MouseY, Vector3.right);
@@ -22,7 +22,7 @@ public class WeaponSway : MonoBehaviour
         Quaternion targetRotation = rotationX * rotationY;
 
 
-        //rotate
+        ////rotate
         transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, _smooth * Time.deltaTime);
 
 
