@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    [Header("Damged")]
+    [Header("--Damged--")]
     [SerializeField] int _damged = 10;
 
 
-    [Header("Animator")]
+    [Header("--Animator--")]
     [SerializeField] Animator _animGun;
     [SerializeField] Animator _animArms;
 
 
-    [Header("Shotting")]
+    [Header("--Shotting--")]
     [Range(0f, Mathf.Infinity)]
     [SerializeField] float _range;
     [SerializeField] Camera _fpsCam;
@@ -21,23 +21,52 @@ public class Gun : MonoBehaviour
     [SerializeField] LayerMask layerMask;
 
 
+    [Header("--Recoil--")]
+    [SerializeField] Recoil recoil;
 
-
-    [Header("Impact&Muzzle")]
+    [Header("--Impact&Muzzle--")]
     [SerializeField] float _impactForce;
     [SerializeField] public ImpactInfo[] ImpactElements;
     [SerializeField] ParticleSystem[] _muzzleEffect;
     [SerializeField] GameObject _pointLight;
 
- 
+    [Header("--Amor--")]
+    [SerializeField] int _maxAmo;
+    [SerializeField] int _currAmo;
+    [SerializeField] float _reloadTimeAmo;
+    [SerializeField] bool _isReloading = false;
+
+
+    private void Start()
+    {
+        _currAmo = _maxAmo;
+    }
     private void Update()
     {
         InputMouse();
     }
-   
 
     void InputMouse()
     {
+        if (_isReloading) return;
+        if (_currAmo <= 0)
+        {
+            StartCoroutine(Reload());
+            Debug.Log(_currAmo);
+            return;
+        }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            _currAmo = _maxAmo;
+            _animGun.SetTrigger("Reload");
+            _animArms.SetTrigger("Reload");
+            foreach (var muzzle in _muzzleEffect)
+            {
+                muzzle.Stop();
+            }
+
+        }
 
         if (Input.GetMouseButton(0) && Time.time >= _nextTimeToFire)
         {
@@ -51,6 +80,23 @@ public class Gun : MonoBehaviour
         }
 
     }
+    [ContextMenu("TestAmo")]
+    void TestAmo()
+    {
+        Debug.Log(_currAmo);
+
+    }
+
+    IEnumerator Reload()
+    {
+        _isReloading = true;
+        _animGun.SetTrigger("Reload");
+        _animArms.SetTrigger("Reload");
+        yield return new WaitForSeconds(_reloadTimeAmo);
+      
+        _currAmo = _maxAmo;
+        _isReloading = false;
+    }
     void SetAnimation()
     {
         _animGun.SetTrigger("isFire");
@@ -60,40 +106,46 @@ public class Gun : MonoBehaviour
    
     void Shot() 
     {
+        if(_currAmo != 0 && !Input.GetKeyDown(KeyCode.R))
+        {
+
+        _currAmo--;
         _pointLight.SetActive(true);
         foreach(var muzzle in _muzzleEffect)
         {
             muzzle.Play();
         }
-        //_muzzleFlash.SetActive(true);
-        RaycastHit hit;
-        if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range,layerMask))
-        {
-            Debug.Log(hit.transform.name, hit.transform.gameObject);
+            //_muzzleFlash.SetActive(true);
+            RaycastHit hit;
+            if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range, layerMask))
+            {
+                Debug.Log(hit.transform.name, hit.transform.gameObject);
+            }
+            recoil.recoil();
+            var effect = TakeImpactEffect(hit.transform.gameObject);
+
+
+            // không có bắn trúng GameObject nào thì sẽ trả về bỏ qua
+            if (effect == null) return;
+
+            //var _impactEffec
+            //t = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
+
+            if (hit.rigidbody != null)
+            {
+                hit.rigidbody.AddForce(-hit.normal * _impactForce);
+            }
+
+            var _impactEffect = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(_impactEffect, 3f);
+            //Object Pool: EZ Pooling
+
+
+
+            //Debug.Log(_impactEffect);
+            Debug.DrawRay(_fpsCam.transform.position, _fpsCam.transform.forward * _range, Color.red);
         }
-        
-        var effect = TakeImpactEffect(hit.transform.gameObject);
-        //if (effect != null) { }
-        
-        // không có bắn trúng GameObject nào thì sẽ trả về bỏ qua
-        if (effect == null) return;
-
-        //var _impactEffec
-        //t = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
-
-        if (hit.rigidbody != null)
-        {
-            hit.rigidbody.AddForce(-hit.normal * _impactForce);
-        }
-
-       var _impactEffect = Instantiate(effect, hit.point, Quaternion.LookRotation(hit.normal));
-        Destroy(_impactEffect, 3f);
-        //Object Pool: EZ Pooling
-
-
-        Debug.Log("Spawn effect");
-        //Debug.Log(_impactEffect);
-        Debug.DrawRay(_fpsCam.transform.position, _fpsCam.transform.forward * _range, Color.red);
+      
     }
     [System.Serializable]
     public class ImpactInfo
