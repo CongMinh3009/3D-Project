@@ -36,7 +36,7 @@ public class Gun : MonoBehaviour
     [SerializeField] float _reloadTimeAmo;
     [SerializeField] bool _isReloading = false;
 
-
+    private bool isFire;
     private void Start()
     {
         _currAmo = _maxAmo;
@@ -58,13 +58,10 @@ public class Gun : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.R))
         {
+            _isReloading = true;
             _currAmo = _maxAmo;
-            _animGun.SetTrigger("Reload");
-            _animArms.SetTrigger("Reload");
-            foreach (var muzzle in _muzzleEffect)
-            {
-                muzzle.Stop();
-            }
+            StartCoroutine(Reload());
+          
 
         }
 
@@ -106,15 +103,15 @@ public class Gun : MonoBehaviour
    
     void Shot() 
     {
-        if(_currAmo != 0 && !Input.GetKeyDown(KeyCode.R))
+         isFire = true;
+        if (_currAmo != 0 || !_isReloading )
         {
-
-        _currAmo--;
-        _pointLight.SetActive(true);
-        foreach(var muzzle in _muzzleEffect)
-        {
-            muzzle.Play();
-        }
+            _currAmo--;
+            _pointLight.SetActive(true);
+            foreach (var muzzle in _muzzleEffect)
+            {
+                muzzle.Play();
+            }
             //_muzzleFlash.SetActive(true);
             RaycastHit hit;
             if (Physics.Raycast(_fpsCam.transform.position, transform.forward, out hit, _range, layerMask))
@@ -145,6 +142,7 @@ public class Gun : MonoBehaviour
             //Debug.Log(_impactEffect);
             Debug.DrawRay(_fpsCam.transform.position, _fpsCam.transform.forward * _range, Color.red);
         }
+     
       
     }
     [System.Serializable]
