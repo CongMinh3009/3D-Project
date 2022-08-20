@@ -64,7 +64,10 @@ public class Gun : MonoBehaviour
           
 
         }
-
+        if(Input.GetMouseButton(1))
+        {
+            _animGun.SetTrigger("Aim");
+        }    
         if (Input.GetMouseButton(0) && Time.time >= _nextTimeToFire)
         {
             _nextTimeToFire = Time.time + 1 / _fireRate;
