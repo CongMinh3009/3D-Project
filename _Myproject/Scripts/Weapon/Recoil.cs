@@ -1,6 +1,7 @@
 
 using UnityEngine;
 
+
 public class Recoil : MonoBehaviour
 {
     Vector3 currentPosition, targetRotation, currentRotation, initGunPosition;
@@ -12,6 +13,9 @@ public class Recoil : MonoBehaviour
     [SerializeField] float _kichBackZ;
 
     [SerializeField] float snappiness, returnAmount;
+
+
+
 
     private void Start()
     {

@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -71,7 +70,7 @@ public class HeathPlayer : MonoBehaviour
     }
     public void TakeDamage()
     {
-        if(CurrentPlayerHeath < 30 )
+        if(CurrentPlayerHeath > 0 )
         {
             canRegen = true;
             StartCoroutine(HurtFlash());

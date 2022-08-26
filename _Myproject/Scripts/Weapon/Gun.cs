@@ -34,9 +34,15 @@ public class Gun : MonoBehaviour
     [SerializeField] int _maxAmo;
     [SerializeField] int _currAmo;
     [SerializeField] float _reloadTimeAmo;
-    [SerializeField] bool _isReloading = false;
+    public bool _isReloading = false;
 
-    private bool isFire;
+    public bool Firing;
+        
+    public Gun(bool firing)
+    {
+        Firing = firing;
+    }
+
     private void Start()
     {
         _currAmo = _maxAmo;
@@ -56,10 +62,10 @@ public class Gun : MonoBehaviour
             return;
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKeyDown(KeyCode.R) && !_isReloading)
         {
-            _isReloading = true;
-            _currAmo = _maxAmo;
+            //_isReloading = true;
+            //_currAmo = _maxAmo;
             StartCoroutine(Reload());
           
 
@@ -103,10 +109,16 @@ public class Gun : MonoBehaviour
         _animArms.SetTrigger("isFire");
 
     }
-   
+    private void OnEnable()
+    {
+        if (_currAmo <= 0) 
+        {
+            StartCoroutine(Reload());
+        }
+    }
     void Shot() 
     {
-         isFire = true;
+        Firing = true;
         if (_currAmo != 0 || !_isReloading )
         {
             _currAmo--;

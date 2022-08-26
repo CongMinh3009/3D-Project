@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform _groundCheck;
     [SerializeField] float _groundDistance;
     [SerializeField] LayerMask _groundMask;
-    [SerializeField] bool _isGrounded;
 
     
     [HideInInspector] Vector3 _velocity;
@@ -31,16 +30,16 @@ public class PlayerController : MonoBehaviour
     {
         Movement();
         Jump();
-        CheckMap();
+        //CheckMap();
     }
-    void CheckMap()
-    {
-        _isGrounded = Physics.CheckSphere(_groundCheck.position,_groundDistance,_groundMask);
-        if(_isGrounded && _velocity.y <0)
-        {
-            _velocity.y = -2f;
-        }
-    }
+    //void CheckMap()
+    //{
+    //    _isGrounded = Physics.CheckSphere(_groundCheck.position,_groundDistance,_groundMask);
+    //    if(_isGrounded && _velocity.y <0)
+    //    {
+    //        _velocity.y = -2f;
+    //    }
+    //}
     void Movement()
     {
        _direction = transform.right * Input.GetAxis("Horizontal") + transform.forward * Input.GetAxis("Vertical");
@@ -51,10 +50,11 @@ public class PlayerController : MonoBehaviour
     }
     void Jump()
     {
-        if(Input.GetButtonDown("Jump") && _isGrounded)
+        if(Input.GetButtonDown("Jump") && _playerController.isGrounded)
         {
-            _velocity.y = _jumpFroce;
-            _isGrounded = false;
+            //_velocity.y = _jumpFroce;
+            _velocity.y = Mathf.Sqrt(_jumpFroce * -.3f * -Gravity);
+
         }
     }
 

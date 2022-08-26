@@ -5,11 +5,11 @@ public class WeaponSway : MonoBehaviour
 {
     [SerializeField] float _swayMouse;
     [SerializeField] float _smooth;
-    private void Update()
+    private void FixUpdate()
     {
         InPutMouse();
     }
-    void InPutMouse()
+   public void InPutMouse()
     {
         //Input mouse
         float MouseX = Input.GetAxisRaw("Mouse X") * _swayMouse;

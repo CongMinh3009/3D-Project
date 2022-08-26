@@ -3,7 +3,11 @@ using UnityEngine;
 public class SwichWeapon : MonoBehaviour
 {
     [SerializeField] GameObject[] _gameObjectsWeapon;
-   
+    [SerializeField] Gun[] isReloading;
+    [SerializeField] Gun[] isFire;
+
+
+
     private void Start()
     {
         startWeapon();
@@ -17,13 +21,20 @@ public class SwichWeapon : MonoBehaviour
     {
        if(Input.GetAxis("Mouse ScrollWheel") > 0f )
         {
+            SetBoolIsReloading();
+            SetBoolIsFire();
+
+
             _gameObjectsWeapon[1].SetActive(true);
             _gameObjectsWeapon[0].SetActive(false);
           
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-           
+            SetBoolIsReloading();
+            SetBoolIsFire();
+
+
             _gameObjectsWeapon[0].SetActive(true);
             _gameObjectsWeapon[1].SetActive(false);
         }   
@@ -34,13 +45,19 @@ public class SwichWeapon : MonoBehaviour
         
         if( Input.GetKeyDown(KeyCode.Alpha1) )
         {
-            _gameObjectsWeapon[0].SetActive(true);
+            SetBoolIsReloading();
+            SetBoolIsFire();
+
+              _gameObjectsWeapon[0].SetActive(true);
             _gameObjectsWeapon[1].SetActive(false);
            
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2) )
         {
-            _gameObjectsWeapon[1].SetActive(true);
+            SetBoolIsReloading();
+            SetBoolIsFire();
+
+             _gameObjectsWeapon[1].SetActive(true);
             _gameObjectsWeapon[0].SetActive(false);
            
         }
@@ -51,5 +68,18 @@ public class SwichWeapon : MonoBehaviour
         _gameObjectsWeapon[0].SetActive(true);
         _gameObjectsWeapon[1].SetActive(false);
     }
-
+    void SetBoolIsFire()
+    {
+        foreach (Gun fire in isFire)
+        {
+            fire.Firing = false;
+        }
+    }
+    void SetBoolIsReloading()
+    {   
+        foreach(Gun reloading in isReloading)
+        {
+            reloading._isReloading = false;
+        }
+    }
 }
